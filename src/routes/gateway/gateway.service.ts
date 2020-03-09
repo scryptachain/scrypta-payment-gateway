@@ -37,7 +37,7 @@ export class GatewayService {
     }
 
     db.put(paymentRequest).catch(error => { console.log(error) })
-    let qrcode = await QRCode.toDataURL(request.asset.toLowerCase() + ':' + address['address'])
+    let qrcode = await QRCode.toDataURL(request.asset.toLowerCase() + ':' + address['address'] + '?amount=' + request.amount)
     
     if(process.env.MAILTO !== undefined){
       this.mailgun.messages().send({
