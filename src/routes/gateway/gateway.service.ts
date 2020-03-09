@@ -77,6 +77,7 @@ export class GatewayService {
             message: 'Waiting for payment',
             balance: balance['data'].balance,
             expected: check['amount'],
+            request: check,
             success: false
           }
         }
