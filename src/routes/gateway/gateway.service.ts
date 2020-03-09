@@ -69,11 +69,12 @@ export class GatewayService {
           return {
             message: 'Payment completed',
             balance: balance['data'].balance,
-            success: false
+            success: true
           }
         }else{
           return {
             message: 'Waiting for payment',
+            balance: balance['data'].balance,
             success: false
           }
         }
