@@ -65,7 +65,7 @@ export class GatewayService {
     if(check._id !== undefined){
       if(check['asset'] === 'LYRA'){
         let balance = await idanode.get('/balance/' + request.address)
-        if(balance['data'].balance === check['amount']){
+        if(parseFloat(balance['data'].balance) === parseFloat(check['amount'])){
           return {
             message: 'Payment completed',
             balance: balance['data'].balance,
