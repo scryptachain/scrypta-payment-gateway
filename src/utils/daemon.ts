@@ -75,6 +75,9 @@ module Daemon {
                                 to: process.env.COLD_ADDRESS,
                                 amount: tosend,
                                 private_key: private_key
+                            }).catch(err => {
+                                console.log('SENT FAILED')
+                                console.log(err)
                             })
                             if(send['data'].data.success === true && send['data'].data.txid !== null && send['data'].data.txid !== undefined){
                                 sendSuccess = true

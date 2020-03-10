@@ -80,7 +80,7 @@ export class GatewayService {
           }
 
           db.get(request.address).then(function (doc) {
-            doc['status'] = 'PAID'
+            doc['status'] = 'TRANSFER'
             doc['notified'] = true
             db.put(doc);
           })
