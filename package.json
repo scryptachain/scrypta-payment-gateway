@@ -29,6 +29,7 @@
     "crypto-js": "^4.0.0",
     "mailgun-js": "^0.22.0",
     "pouchdb": "^7.2.1",
+    "pouchdb-find": "^7.2.1",
     "qrcode": "^1.4.4",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
