@@ -36,6 +36,7 @@ export class GatewayService {
       asset: request.asset,
       notes: request.notes,
       created: created,
+      notified: false,
       status: 'WAITING'
     }
 
@@ -75,7 +76,7 @@ export class GatewayService {
               from: 'Scrypta Gateway <'+ process.env.MAILFROM +'>',
               to: process.env.MAILTO,
               subject: 'Payment ' +  request.address + ' completed.',
-              html: 'You just received ' + check['amount'] + ' ' + check['asset'] + ' in your address.<br><br>Notes: ' + request.notes
+              html: 'You just received ' + check['amount'] + ' ' + check['asset'] + ' in your address.'
             })
           }
 

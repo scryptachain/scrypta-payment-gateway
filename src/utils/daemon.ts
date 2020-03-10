@@ -46,7 +46,7 @@ module Daemon {
                     let balance = await idanode.get('/balance/' + doc['address'].address)
                     if(parseFloat(balance['data'].balance) === parseFloat(doc['amount'])){
                         console.log('PAYMENT RECEIVED')
-                        if(process.env.MAILTO !== undefined && doc['notified'] === undefined){
+                        if(process.env.MAILTO !== undefined && doc['notified'] === false){
                             this.mailgun.messages().send({
                               from: 'Scrypta Gateway <'+ process.env.MAILFROM +'>',
                               to: process.env.MAILTO,
