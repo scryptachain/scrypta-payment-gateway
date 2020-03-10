@@ -3,7 +3,7 @@ let axios = require('axios')
 
 module RPC {
 
-    const idanodes = ['https://idanodejs01.scryptachain.org','https://idanodejs02.scryptachain.org','https://idanodejs03.scryptachain.org']
+    const idanodes = ['https://idanodejs01.scryptachain.org']
 
     export class Wallet {
   
