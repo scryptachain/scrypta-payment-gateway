@@ -48,7 +48,7 @@ export class GatewayService {
         from: 'Scrypta Gateway <'+ process.env.MAILFROM +'>',
         to: process.env.MAILTO,
         subject: 'Gateway Request on ' + address['address'],
-        html: 'Here\'s a new request from the Lyra Gateway:<br>' + address['address'] + '<br><br>Notes: ' + request.notes
+        html: 'Here\'s a new request from the Lyra Gateway:<br>' + address['address'] + '<br>Amount: ' + request.amount + ' ' + request.asset + '<br>Notes: ' + request.notes
       })
     }
 
