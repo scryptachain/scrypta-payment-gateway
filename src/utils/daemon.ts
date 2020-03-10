@@ -51,7 +51,7 @@ module Daemon {
                               from: 'Scrypta Gateway <'+ process.env.MAILFROM +'>',
                               to: process.env.MAILTO,
                               subject: 'Payment ' +  doc['address'].address + ' completed.',
-                              html: 'You just received ' + doc['amount'] + ' ' + doc['asset'] + ' in your address.<br><br>Notes: ' + doc['notes']
+                              html: 'You just received ' + doc['amount'] + ' ' + doc['asset'] + ' in your address.'
                             })
                         }
 
