@@ -50,7 +50,7 @@ module Daemon {
                             this.mailgun.messages().send({
                               from: 'Scrypta Gateway <'+ process.env.MAILFROM +'>',
                               to: process.env.MAILTO,
-                              subject: 'Payment ' +  request.address + ' completed.',
+                              subject: 'Payment ' +  doc['address'].address + ' completed.',
                               html: 'You just received ' + doc['amount'] + ' ' + doc['asset'] + ' in your address.<br><br>Notes: ' + request.notes
                             })
                         }
@@ -64,6 +64,12 @@ module Daemon {
 
                         if(doc['asset'] === 'LYRA'){
                             let tosend = doc['amount'] - 0.001
+                            console.log(JSON.stringify({
+                                from: doc['address'].address,
+                                to: process.env.COLD_ADDRESS,
+                                amount: tosend,
+                                private_key: private_key
+                            }))
                             let send = await idanode.post('/send', {
                                 from: doc['address'].address,
                                 to: process.env.COLD_ADDRESS,
@@ -83,7 +89,7 @@ module Daemon {
                                 paid['notified'] = true
                                 db.put(paid);
                             })
-                            console.log('PAYMENT RECEIVED')
+                            console.log('PAYMENT UPDATED')
                         }else{
                             console.log('SOMETHING WRONG WITH SEND, BUT PAYMENT IS OK')
                         }
