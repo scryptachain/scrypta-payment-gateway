@@ -70,19 +70,8 @@ export class GatewayService {
       if(check['asset'] === 'LYRA'){
         let balance = await idanode.get('/balance/' + request.address)
         if(parseFloat(balance['data'].balance) === parseFloat(check['amount'])){
-          
-          if(process.env.MAILTO !== undefined){
-            this.mailgun.messages().send({
-              from: 'Scrypta Gateway <'+ process.env.MAILFROM +'>',
-              to: process.env.MAILTO,
-              subject: 'Payment ' +  request.address + ' completed.',
-              html: 'You just received ' + check['amount'] + ' ' + check['asset'] + ' in your address.'
-            })
-          }
-
           db.get(request.address).then(function (doc) {
             doc['status'] = 'TRANSFER'
-            doc['notified'] = true
             db.put(doc);
           })
 
@@ -100,6 +89,8 @@ export class GatewayService {
             success: false
           }
         }
+      }else{
+        // TODO: Check asset balance
       }
     }else{
       return {

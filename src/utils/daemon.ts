@@ -43,18 +43,17 @@ module Daemon {
                 }
 
                 if(expired === false){
-                    let balance = await idanode.get('/balance/' + doc['address'].address)
-                    if(parseFloat(balance['data'].balance) === parseFloat(doc['amount'])){
-                        console.log('PAYMENT RECEIVED')
-                        if(process.env.MAILTO !== undefined && doc['notified'] === false){
-                            this.mailgun.messages().send({
-                              from: 'Scrypta Gateway <'+ process.env.MAILFROM +'>',
-                              to: process.env.MAILTO,
-                              subject: 'Payment ' +  doc['address'].address + ' completed.',
-                              html: 'You just received ' + doc['amount'] + ' ' + doc['asset'] + ' in your address.'
-                            })
-                        }
+                    let balance = 0
+                    
+                    if(doc['asset'] === 'LYRA'){
+                        let balanceRequest = await idanode.get('/balance/' + doc['address'].address)
+                        balance = parseFloat(balance['data'].balance) 
+                    }else{
+                        // TODO: Check asset balance
+                    }
 
+                    if(balance === parseFloat(doc['amount'])){
+                        console.log('PAYMENT RECEIVED')
 
                         var decipher = crypto.createDecipher('aes-256-cbc', process.env.SALT)
                         var dec = decipher.update(doc['address'].private_key,'hex','utf8')
@@ -87,11 +86,21 @@ module Daemon {
                         }
 
                         if(sendSuccess === true){
+                            if(process.env.MAILTO !== undefined && doc['notified'] === false){
+                                this.mailgun.messages().send({
+                                from: 'Scrypta Gateway <'+ process.env.MAILFROM +'>',
+                                to: process.env.MAILTO,
+                                subject: 'Payment ' +  doc['address'].address + ' completed.',
+                                html: 'You just received ' + doc['amount'] + ' ' + doc['asset'] + ' in your cold storage address.'
+                                })
+                            }
+
                             db.get(doc['address'].address).then(function (paid) {
                                 paid['status'] = 'PAID'
                                 paid['notified'] = true
                                 db.put(paid);
                             })
+
                             console.log('PAYMENT UPDATED')
                         }else{
                             console.log('SOMETHING WRONG WITH SEND, BUT PAYMENT IS OK')
