@@ -41,7 +41,7 @@ export class GatewayService {
     }
 
     db.put(paymentRequest).catch(error => { console.log(error) })
-    let qrcode = await QRCode.toDataURL(request.asset.toLowerCase() + ':' + address['address'] + '?amount=' + request.amount.replace(',','.'))
+    let qrcode = await QRCode.toDataURL(request.asset.toLowerCase() + ':' + address['address'] + '?amount=' + request.amount)
     
     if(process.env.MAILTO !== undefined){
       this.mailgun.messages().send({
@@ -67,30 +67,33 @@ export class GatewayService {
 
     let check = await db.get(request.address)
     if(check._id !== undefined){
+      let balance
       if(check['asset'] === 'LYRA'){
-        let balance = await idanode.get('/balance/' + request.address)
-        if(parseFloat(balance['data'].balance) === parseFloat(check['amount'])){
-          db.get(request.address).then(function (doc) {
-            doc['status'] = 'TRANSFER'
-            db.put(doc);
-          })
-
-          return {
-            message: 'Payment completed',
-            balance: balance['data'].balance,
-            expected: parseFloat(check['amount']),
-            success: true
-          }
-        }else{
-          return {
-            message: 'Waiting for payment',
-            balance: balance['data'].balance,
-            expected: parseFloat(check['amount']),
-            success: false
-          }
-        }
+        let balanceRequest = await idanode.get('/balance/' + request.address)
+        balance = parseFloat(balanceRequest['data'].balance)
       }else{
         // TODO: Check asset balance
+      }
+
+      if(balance === parseFloat(check['amount'])){
+        db.get(request.address).then(function (doc) {
+          doc['status'] = 'TRANSFER'
+          db.put(doc);
+        })
+
+        return {
+          message: 'Payment completed',
+          balance: balance['data'].balance,
+          expected: parseFloat(check['amount']),
+          success: true
+        }
+      }else{
+        return {
+          message: 'Waiting for payment',
+          balance: balance['data'].balance,
+          expected: parseFloat(check['amount']),
+          success: false
+        }
       }
     }else{
       return {
