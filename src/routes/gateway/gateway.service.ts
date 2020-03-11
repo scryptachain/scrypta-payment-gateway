@@ -87,14 +87,14 @@ export class GatewayService {
 
         return {
           message: 'Payment completed',
-          balance: balance['data'].balance,
+          balance: balance,
           expected: parseFloat(check['amount']),
           success: true
         }
       }else{
         return {
           message: 'Waiting for payment',
-          balance: balance['data'].balance,
+          balance: balance,
           expected: parseFloat(check['amount']),
           success: false
         }
