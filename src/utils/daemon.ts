@@ -46,7 +46,7 @@ module Daemon {
                     
                     let balance
                     if(doc['asset'] === 'LYRA'){
-                        let balanceRequest = await idanode.get('/balance/' + request.address)
+                        let balanceRequest = await idanode.get('/balance/' + doc['address'].address)
                         balance = parseFloat(balanceRequest['data'].balance)
                     }else{
                         let balanceRequest = await idanode.post('/sidechain/balance',{
