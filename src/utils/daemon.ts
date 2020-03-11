@@ -55,7 +55,7 @@ module Daemon {
                         })
                         balance = parseFloat(balanceRequest['data'].balance)
                     }
-                    console.log('BALANCE IS ' + balance + ' VS ' + parseFloat(doc['amount']))
+                    console.log('BALANCE IS ' + balance + doc['asset'] + ' VS ' + parseFloat(doc['amount']) + doc['asset'])
                     if(balance === parseFloat(doc['amount'])){
                         console.log('PAYMENT RECEIVED')
 
