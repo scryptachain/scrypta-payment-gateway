@@ -29,7 +29,7 @@ module Daemon {
             })
             for(let x in payments.docs){
                 let doc = payments.docs[x]
-                console.log('CHECKING ' + doc['address'].address)
+                console.log('CHECKING PAYMENT OF ' + doc['amount'] + ' ' + doc['asset'] + ' FOR ' + doc['address'].address)
                 let expired = false
                 if(doc['expiration'] > 0){
                     let now = Math.floor(Date.now() / 1000)
@@ -50,7 +50,7 @@ module Daemon {
                         balance = parseFloat(balanceRequest['data'].balance)
                     }else{
                         let balanceRequest = await idanode.post('/sidechain/balance',{
-                            dapp_address: request.address,
+                            dapp_address: doc['address'].address,
                             sidechain_address: doc['asset']
                         })
                         balance = parseFloat(balanceRequest['data'].balance)
@@ -86,7 +86,51 @@ module Daemon {
                                 sendSuccess = true
                             }
                         }else{
-                            // TODO: SEND ASSET
+
+                            let balanceRequest = await idanode.get('/balance/' + doc['address'].address)
+                            let addressBalance = balanceRequest['data'].balance
+                            if(addressBalance === 0){
+                                let wallet = new RPC.Wallet
+                                let lyraRequest = await wallet.request('getinfo')
+                                if(lyraRequest['result'] !== undefined){
+                                    let lyraBalance = lyraRequest['result']['balance']
+                                    if(lyraBalance > 0.001){
+                                        console.log('SENDING 0.001 LYRA TO ' + doc['address'].address)
+                                        let sendRequest = await wallet.request('sendtoaddress', [doc['address'].address, 0.001])
+                                        if(sendRequest['result'].length === 64){
+                                            while(addressBalance === 0){
+                                                let balanceRequest = await idanode.get('/balance/' + doc['address'].address)
+                                                addressBalance = balanceRequest['data'].balance
+                                            }
+                                        }else{
+                                            console.log('0.001 LYRA SENDING FAILED')
+                                        }
+                                    }else{
+                                        console.log("CAN'T SEND 0.001 LYRA")
+                                    }
+                                }else{
+                                    console.log("WALLET NOT CONNECTED, PLEASE CHECK!")
+                                }
+                            }
+                                
+                            if(addressBalance >= 0.001){
+                                let send = await idanode.post('/sidechain/send', {
+                                    from: doc['address'].address,
+                                    pubkey: doc['address'].pub_key,
+                                    sidechain_address: doc['asset'],
+                                    to: process.env.COLD_ADDRESS,
+                                    amount: doc['amount'],
+                                    private_key: private_key
+                                }).catch(err => {
+                                    console.log('SENT FAILED')
+                                    console.log(err)
+                                })
+                                if(send['data'].txs !== undefined){
+                                    if(send['data'].txs[0].length === 64){
+                                        sendSuccess = true
+                                    }
+                                }
+                            }
                         }
 
                         if(sendSuccess === true){

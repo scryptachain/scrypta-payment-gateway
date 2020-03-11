@@ -3,8 +3,7 @@ let axios = require('axios')
 
 module RPC {
 
-    //const idanodes = ['https://idanodejs01.scryptachain.org','https://idanodejs02.scryptachain.org','https://idanodejs03.scryptachain.org']
-    const idanodes = ['https://idanodejs01.scryptachain.org']
+    const idanodes = ['https://idanodejs01.scryptachain.org','https://idanodejs02.scryptachain.org','https://idanodejs03.scryptachain.org']
 
     export class Wallet {
   
@@ -60,6 +59,8 @@ module RPC {
                             connected = true
                             response(check.config.url.replace('/wallet/getinfo',''))
                         }
+                    }).catch(err => {
+                        console.log('ERROR ON CONNECTION TO IDANODE')
                     })
                 }
             })
