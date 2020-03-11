@@ -43,13 +43,17 @@ module Daemon {
                 }
 
                 if(expired === false){
-                    let balance = 0
                     
+                    let balance
                     if(doc['asset'] === 'LYRA'){
-                        let balanceRequest = await idanode.get('/balance/' + doc['address'].address)
-                        balance = parseFloat(balance['data'].balance) 
+                        let balanceRequest = await idanode.get('/balance/' + request.address)
+                        balance = parseFloat(balanceRequest['data'].balance)
                     }else{
-                        // TODO: Check asset balance
+                        let balanceRequest = await idanode.post('/sidechain/balance',{
+                        dapp_address: request.address,
+                        sidechain_address: doc['asset']
+                        })
+                        balance = parseFloat(balanceRequest['data'].balance)
                     }
 
                     if(balance === parseFloat(doc['amount'])){
