@@ -14,4 +14,9 @@ export class GatewayController {
   async checkRequest(@Body() request): Promise<Object> {
     return await this.gateway.checkRequest(request)
   }
+
+  @Post('validate')
+  async validateRequest(@Body() request): Promise<Object> {
+    return await this.gateway.validateRequest(request)
+  }
 }
